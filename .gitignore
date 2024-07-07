@@ -6,3 +6,6 @@
 
 # Python build system:
 dist/
+
+# Development and testing:
+.coverage

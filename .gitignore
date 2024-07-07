@@ -1,0 +1,8 @@
+# Various OS dependent metafiles:
+.DS_Store
+
+# Python caches:
+*.pyc
+
+# Python build system:
+dist/

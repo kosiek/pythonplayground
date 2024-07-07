@@ -1,0 +1,26 @@
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "pkoskanumberfunctions"
+version = "0.1.0"
+description = "My personal playground libraries connected to solving some mathematical problems."
+authors = ["Przemyslaw Koska <przemyslaw.koska@outlook.com>"]
+packages = [
+    { include = "numberfunc", from="src" },
+    { include = "tests", format="sdist" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.2"
+assertpy = "^1.1"
+pytest-cov = "^5.0"
+pyyaml = "^6.0"
+
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov-report term-missing"

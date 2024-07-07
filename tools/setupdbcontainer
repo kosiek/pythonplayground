@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""A quick and dirty PoC script to start MariaDB and upload sample schema.
+"""
+
+import subprocess
+import yaml
+from os.path import abspath, dirname
+import time
+import os
+
+
+def get_project_root_dir():
+    root_dir = dirname(abspath(__file__))
+    while not os.path.isfile(f"{root_dir}/requirements.txt"):
+        root_dir = dirname(root_dir)
+    return root_dir
+
+
+PROJECT_ROOT_DIR = get_project_root_dir()
+
+# Check if podman is installed:
+CONTAINER_CMD = "podman"
+if os.system("which podman") != 0:
+    print("Podman is not supported")
+    CONTAINER_CMD = "docker"
+
+# Load database configuration from db_config.yaml
+with open(f"{PROJECT_ROOT_DIR}/media/db_config.yaml", "r") as file:
+    db_config = yaml.safe_load(file)
+
+CONTAINER_NAME = "pkoskanumberfunctions_mariadb"
+# Define Docker run command
+cmd_check_container = (
+    f"{CONTAINER_CMD} ps -a --filter name={CONTAINER_NAME}" " --format '{{.Names}}'"
+)
+if subprocess.run(cmd_check_container, shell=True).returncode == 0:
+    print(f"Container {CONTAINER_NAME!r} already exists, removing it...")
+    subprocess.run(f"{CONTAINER_CMD} rm -f {CONTAINER_NAME}", shell=True)
+    print(f"Container {CONTAINER_NAME!r} has been removed.")
+    time.sleep(1)
+
+# Execute Docker run command
+subprocess.run(
+    (  # Start container command:
+        f"{CONTAINER_CMD} run"
+        f" --name {CONTAINER_NAME}"
+        f" -p {db_config['port']}:{db_config['port']}"
+        f" -e MYSQL_ROOT_PASSWORD={db_config['password']}"
+        # f" -e MYSQL_DATABASE={db_config['database']}"
+        # f" -e MYSQL_USER={db_config['user']}"
+        f" -e MYSQL_ALLOW_EMPTY_PASSWORD=yes "
+        " -d"
+        " mysql:5.7"
+    ),
+    shell=True,
+)
+
+# Check if the database is running
+print("Waiting for database to initialize (max 1 minute)...")
+MAX_ATTEMPTS = 12
+for i in range(1, MAX_ATTEMPTS + 1):
+    result = subprocess.run(
+        (
+            f"{CONTAINER_CMD} exec {CONTAINER_NAME}"
+            f" mysqladmin ping -h 127.0.0.1 -P {db_config['port']} --silent"
+        ),
+        shell=True,
+    )
+    if result.returncode == 0:
+        print("Database is ready and running in the container.")
+        break
+    else:
+        print(f"({i * 5} / {MAX_ATTEMPTS * 5}) Database is not ready yet, waiting for 5 seconds...")
+        time.sleep(5)
+
+SETUP_SCRIPT_NAME = "db_script.sql"
+print(f"Injecting {SETUP_SCRIPT_NAME} into the database...")
+db_script_path = f"{PROJECT_ROOT_DIR}/media/{SETUP_SCRIPT_NAME}"
+if (
+    subprocess.run(
+        (
+            f"{CONTAINER_CMD} exec -i {CONTAINER_NAME}"
+            f" mysql -vv -u {db_config['user']}"
+            f" --password={db_config['password']}"
+            f" < {db_script_path}"
+        ),
+        shell=True,
+    ).returncode
+    == 0
+):
+    print(f"{SETUP_SCRIPT_NAME} has been successfully injected into the database.")
+else:
+    print(
+        f"Error while injecting {db_script_path!r} into the database." " Please inspect the logs."
+    )

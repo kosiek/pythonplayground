@@ -8,4 +8,4 @@
 dist/
 
 # Development and testing:
-.coverage
+.coverage*

@@ -1,11 +1,15 @@
+# type: ignore
+# ruff: noqa
+
+from assertpy import assert_that
+from pytest import fixture, raises
+
 from numberfunc.number_generations import (
-    find_number_ids_that_sum_to,
     InvalidSourceNumbersArrayError,
     InvalidTargetError,
     NoSolutionError,
+    find_number_ids_that_sum_to,
 )
-from pytest import fixture, raises
-from assertpy import assert_that
 
 
 @fixture

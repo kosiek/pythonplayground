@@ -9,18 +9,47 @@ version = "0.1.0"
 description = "My personal playground libraries connected to solving some mathematical problems."
 authors = ["Przemyslaw Koska <przemyslaw.koska@outlook.com>"]
 packages = [
-    { include = "numberfunc", from="src" },
-    { include = "tests", format="sdist" },
+    { include = "numberfunc", from = "src" },
+    { include = "experiments", from = "src" },
+    { include = "tests", format = "sdist" },
 ]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
+types-assertpy = "^1.1.0.20250502"
+ruff = "^0.12.12"
 pytest = "^8.2"
 assertpy = "^1.1"
 pytest-cov = "^5.0"
 pyyaml = "^6.0"
 
+[tool.poetry.scripts]
+inmemdbserver = "experiments.inmemdb_concurrent.sample:main"
+
 [tool.pytest.ini_options]
 addopts = "--cov=src --cov-report term-missing"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # Pyflakes
+    "I",  # isort (import sorting)
+    "UP", # pyupgrade
+    "B",  # flake8-bugbear
+]
+
+[tool.ruff.lint.isort]
+force-single-line = false
+combine-as-imports = true
+split-on-trailing-comma = true

@@ -1,15 +1,15 @@
 from enum import IntEnum
-from typing import List
+
 
 class QueryType(IntEnum):
     INSERT_ONE = 1
     DELETE_ONE = 2
     CHECK_INTEGER_FREQUENCY = 3
 
-OperationsList = List[List[int]]
+OperationsList = list[list[int]]
 
 # Complete the freqQuery function below.
-def query_for_information(queries: OperationsList) -> List[int]:
+def query_for_information(queries: OperationsList) -> list[int]:
     data: dict[int, int] = {}
 
     def insert_one(data: dict[int, int], value) -> int | None:
@@ -17,7 +17,7 @@ def query_for_information(queries: OperationsList) -> List[int]:
             data[value] += 1
             return
         data[value] = 1
-        
+
     def delete_one(data: dict[int, int], value) -> int | None:
         if value not in data:
             return

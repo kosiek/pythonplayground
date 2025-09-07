@@ -1,4 +1,3 @@
-from typing import List
 
 # Given an array of numbers and a target number, return the indices of two numbers in the array that
 # add up to the target number:
@@ -25,7 +24,7 @@ from typing import List
 class InvalidTargetError(Exception):
     """This class represents an error when the target number is invalid, e.g. zero or lower."""
 
-    def __init__(self, target_number: List[int]):
+    def __init__(self, target_number: list[int]):
         super().__init__(f"The target number {target_number!r} must be non-zero and non-negative!")
 
 
@@ -33,7 +32,7 @@ class InvalidSourceNumbersArrayError(Exception):
     """This class represents an error when the source numbers are at least partially invalid, e.g.
     zero, or negative."""
 
-    def __init__(self, source_numbers: List[int]):
+    def __init__(self, source_numbers: list[int]):
         super().__init__(f"Numbers in the source array {source_numbers!r} contain invalid elements")
 
 
@@ -41,7 +40,7 @@ class NoSolutionError(Exception):
     """This class represents an error when the set of input and output numbers do not have a
     solution."""
 
-    def __init__(self, target_number: int, source_numbers: List[int]):
+    def __init__(self, target_number: int, source_numbers: list[int]):
         message = (
             f"There are no numbers in the soruce array {source_numbers!r} that equal to"
             f" {target_number}"
@@ -50,7 +49,7 @@ class NoSolutionError(Exception):
 
 
 def find_number_ids_that_sum_to(
-    *, target_number: int, from_source_array: List[int]
+    *, target_number: int, from_source_array: list[int]
 ) -> tuple[int, int]:
     if target_number < 1:
         raise InvalidTargetError(target_number)
@@ -71,7 +70,7 @@ def find_number_ids_that_sum_to(
 
     raise NoSolutionError(target_number=target_number, source_numbers=from_source_array)
 
-def find_pairs_that_differ_by(amount: int, arr: List[int]):
+def find_pairs_that_differ_by(amount: int, arr: list[int]):
     if amount == 0:
         raise ValueError("k = 0 is not allowed!")
     number_pairs = 0
@@ -86,7 +85,7 @@ def find_pairs_that_differ_by(amount: int, arr: List[int]):
     return number_pairs / 2
 
 
-def find_longest_sequence(*, in_array: List[int]) -> tuple[int, int]:
+def find_longest_sequence(*, in_array: list[int]) -> tuple[int, int]:
     # number_map = {e: 0 for e in in_array}
     number_map = set(in_array)
     max_left_boundary = in_array[0]

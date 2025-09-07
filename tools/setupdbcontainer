@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""A quick and dirty PoC script to start MariaDB and upload sample schema.
-"""
+"""A quick and dirty PoC script to start MariaDB and upload sample schema."""
 
-import subprocess
-import yaml
-from os.path import abspath, dirname
-import time
 import os
+import subprocess
+import time
+from os.path import abspath, dirname
+
+import yaml
 
 
 def get_project_root_dir():
@@ -25,13 +25,13 @@ if os.system("which podman") != 0:
     CONTAINER_CMD = "docker"
 
 # Load database configuration from db_config.yaml
-with open(f"{PROJECT_ROOT_DIR}/media/db_config.yaml", "r") as file:
+with open(f"{PROJECT_ROOT_DIR}/media/db_config.yaml") as file:
     db_config = yaml.safe_load(file)
 
 CONTAINER_NAME = "pkoskanumberfunctions_mariadb"
 # Define Docker run command
 cmd_check_container = (
-    f"{CONTAINER_CMD} ps -a --filter name={CONTAINER_NAME}" " --format '{{.Names}}'"
+    f"{CONTAINER_CMD} ps -a --filter name={CONTAINER_NAME} --format '{{{{.Names}}}}'"
 )
 if subprocess.run(cmd_check_container, shell=True).returncode == 0:
     print(f"Container {CONTAINER_NAME!r} already exists, removing it...")
@@ -90,6 +90,4 @@ if (
 ):
     print(f"{SETUP_SCRIPT_NAME} has been successfully injected into the database.")
 else:
-    print(
-        f"Error while injecting {db_script_path!r} into the database." " Please inspect the logs."
-    )
+    print(f"Error while injecting {db_script_path!r} into the database. Please inspect the logs.")
